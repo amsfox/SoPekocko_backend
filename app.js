@@ -1,5 +1,14 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require('mongoose');
+
+const Product = require("./models/product")
+
+mongoose.connect('mongodb+srv://ahmed:17012015@cluster0.z6hwp.mongodb.net/<dbname>?retryWrites=true&w=majority',
+  { useNewUrlParser: true,
+    useUnifiedTopology: true })
+  .then(() => console.log('Connexion à MongoDB réussie !'))
+  .catch(() => console.log('Connexion à MongoDB échouée !'));
 
 const app = express();
 
@@ -14,44 +23,37 @@ app.use(bodyParser.json());
 
 
 app.post("/api/sauces", (req, res, next) => {
-    console.log(req.body);
-    res.status(201).json({
-        message: "Objet crée !"
+    delete req.body.id;
+    const product = new Product({
+        ...req.body
     });
+    product.save()
+        .then(() => res.status(201).json({ message: 'Objet enregistré !'}))
+        .catch(error => res.status(400).json({ error }));
 });
 
-app.use('/api/sauces', (req, res, next) => {
-    const stuff = [
-      {
-        _id: 'oeihfzeoi',
-        userId: 'Mon premier objet',
-        name: 'Mon premier objet',
-        manufacturer: 'Mon premier objet',
-        description: 'Les infos de mon premier objet',
-        mainPepper: 'Les infos de mon premier objet',
-        imageUrl: 'https://cdn.pixabay.com/photo/2019/06/11/18/56/camera-4267692_1280.jpg',
-        heat: 10,
-        likes: 15,
-        dislikes: 20,
-        usersLiked: 'Les infos de mon premier objet',
-        usersDisliked: 'Les infos de mon premier objet',
-      },
-      {
-        _id: 'oeihfzeoi',
-        userId: 'Mon premier objet',
-        name: 'Mon premier objet',
-        manufacturer: 'Mon premier objet',
-        description: 'Les infos de mon premier objet',
-        mainPepper: 'Les infos de mon premier objet',
-        imageUrl: 'https://cdn.pixabay.com/photo/2019/06/11/18/56/camera-4267692_1280.jpg',
-        heat: 10,
-        likes: 15,
-        dislikes: 20,
-        usersLiked: 'Les infos de mon premier objet',
-        usersDisliked: 'Les infos de mon premier objet',
-      },
-    ];
-    res.status(200).json(stuff);
+app.put("api/sauces/:id", (req, res, next) => {
+    Product.updateOne({ id: req.params.id }, { ...req.body, id: req.params.id })
+      .then(() => res.status(200).json({ message: 'Objet modifié !'}))
+      .catch(error => res.status(400).json({ error }));
+})
+
+app.delete('/api/sauces/:id', (req, res, next) => {
+    Product.deleteOne({ id: req.params.id })
+      .then(() => res.status(200).json({ message: 'Objet supprimé !'}))
+      .catch(error => res.status(400).json({ error }));
+});
+
+app.get('/api/sauces/:id', (req, res, next) => {
+    Product.findOne({id: req.params.id})
+    .then(product => res.status(200).json(product))
+    .catch(error => res.status(400).json({ error }));
+});
+
+app.get('/api/sauces', (req, res, next) => {
+    Product.find()
+    .then(products => res.status(200).json(products))
+    .catch(error => res.status(400).json({ error }));
 });
 
 
