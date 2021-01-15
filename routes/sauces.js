@@ -12,6 +12,7 @@ router.put('/:id', auth, multer, saucesCtrl.modifyProduct);
 router.delete('/:id', auth, saucesCtrl.deleteProduct);
 router.get('/:id', auth, saucesCtrl.getOneProduct);
 router.get('/', auth, saucesCtrl.getAllProducts);
+router.post('/:id/like', auth, saucesCtrl.likeDislike);
 
 
 module.exports = router;

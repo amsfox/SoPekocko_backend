@@ -9,12 +9,20 @@ const userRoutes = require("./routes/user");
 const app = express();
 
 
+//le bon
+// mongoose.connect('mongodb+srv://kaba:17012015@cluster0.psj1m.mongodb.net/<dbname>?retryWrites=true&w=majority',
+//   { useNewUrlParser: true,
+//     useUnifiedTopology: true })
+//   .then(() => console.log('Connexion à MongoDB réussie !'))
+//   .catch(() => console.log('Connexion à MongoDB échouée !'));
 
-mongoose.connect('mongodb+srv://kaba:17012015@cluster0.psj1m.mongodb.net/<dbname>?retryWrites=true&w=majority',
+  //test
+  mongoose.connect('mongodb+srv://ahmed:17012015@cluster0.z6hwp.mongodb.net/<dbname>?retryWrites=true&w=majority',
   { useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
   .catch(() => console.log('Connexion à MongoDB échouée !'));
+
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');

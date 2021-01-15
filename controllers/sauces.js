@@ -17,11 +17,6 @@ exports.createProduct = (req, res, next) => {
         .catch(error => res.status(400).json({ error }));
 };
 
-// exports.modifyProduct = (req, res, next) => {
-//     Product.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
-//       .then(() => res.status(200).json({ message: 'Objet modifié !'}))
-//       .catch(error => res.status(400).json({ error }));
-//   };
 
 exports.modifyProduct = (req, res, next) => {
   const productObject = req.file ?
@@ -33,12 +28,6 @@ exports.modifyProduct = (req, res, next) => {
     .then(() => res.status(200).json({ message: 'Objet modifié !'}))
     .catch(error => res.status(400).json({ error }));
 };
-
-// exports.deleteProduct = (req, res, next) => {
-//     Product.deleteOne({ _id: req.params.id })
-//       .then(() => res.status(200).json({ message: 'Objet supprimé !'}))
-//       .catch(error => res.status(400).json({ error }));
-// };
 
 
 exports.deleteProduct = (req, res, next) => {
@@ -58,10 +47,62 @@ exports.getOneProduct = (req, res, next) => {
     Product.findOne({ _id: req.params.id })
       .then(product => res.status(200).json(product))
       .catch(error => res.status(404).json({ error }));
-  };
+};
 
 exports.getAllProducts = (req, res, next) => {
     Product.find()
       .then(products => res.status(200).json(products))
       .catch(error => res.status(400).json({ error }));
-  };
+};
+
+exports.likeDislike = (req, res, next) => {
+  // les variables
+  const like = req.body.like
+  
+
+  //les conditions
+  Product.findOne({ _id: req.params.id })
+    .then(product => {
+      if (like === 1) { //like
+        product.likes++;
+        product.usersLiked.push(req.body.userId);
+      }
+    
+      else if (like === -1) { //dislike
+        product.dislikes++;
+        product.usersDisliked.push(req.body.userId);
+    
+      }
+    
+      if (like === 0) {
+        if (product.usersLiked.find(userId => userId == req.body.userId) != undefined) { // si like
+          product.likes--;
+          product.usersLiked.pop();
+
+        } else { // si dislike
+          product.dislikes--;
+          product.usersDisliked.pop();
+
+        }
+
+    
+      }
+
+      Product.updateOne({ _id: product._id }, {
+        likes: product.likes, 
+        dislikes: product.dislikes,
+        usersLiked: product.usersLiked,
+        usersDisliked: product.usersDisliked
+      })
+          .then(() => res.status(200).json({ message: 'objet liké'}))
+          .catch(error => {
+            console.log(error);
+            res.status(400).json({ error })});
+
+    })
+    .catch(error => {
+      console.log(error);
+      res.status(400).json({ error })});
+  
+
+}
