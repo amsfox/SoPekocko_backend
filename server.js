@@ -1,5 +1,5 @@
-const http = require('http');
-const app = require('./app');
+const http = require('http'); // première chose à faire importer le package http de Node (qui nous permt de créer un serveur)
+const app = require('./app'); // on inporte l'application express app.js
 
 const normalizePort = val => {
   const port = parseInt(val, 10);
@@ -35,7 +35,7 @@ const errorHandler = error => {
   }
 };
 
-const server = http.createServer(app);
+const server = http.createServer(app); // on passe l'application app au serveur (c'est lui qui va recevoir la requête et la reponse) 
 
 server.on('error', errorHandler);
 server.on('listening', () => {
@@ -44,4 +44,4 @@ server.on('listening', () => {
   console.log('Listening on ' + bind);
 });
 
-server.listen(port);
+server.listen(port); // le serveur doit ecouter les requetes envoyer, on met par defaut en developpement le port 3000, mais il y'a des cas où ce port pas dispo donc utiliser un process.env

@@ -1,23 +1,21 @@
-const express = require("express");
+const express = require("express"); // on importe l'application express
 const bodyParser = require("body-parser");
 const mongoose = require('mongoose');
+const env = require("dotenv").config()
+
 const path = require('path');
+
+
 
 const saucesRoutes = require("./routes/sauces");
 const userRoutes = require("./routes/user");
 
 const app = express();
 
+let pwd = process.env.PWRD;
+let user = process.env.USER;
 
-//le bon
-// mongoose.connect('mongodb+srv://kaba:17012015@cluster0.psj1m.mongodb.net/<dbname>?retryWrites=true&w=majority',
-//   { useNewUrlParser: true,
-//     useUnifiedTopology: true })
-//   .then(() => console.log('Connexion à MongoDB réussie !'))
-//   .catch(() => console.log('Connexion à MongoDB échouée !'));
-
-  //test
-  mongoose.connect('mongodb+srv://ahmed:17012015@cluster0.z6hwp.mongodb.net/<dbname>?retryWrites=true&w=majority',
+  mongoose.connect(`mongodb+srv://${user}:${pwd}@cluster0.z6hwp.mongodb.net/<dbname>?retryWrites=true&w=majority`,
   { useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
@@ -39,4 +37,7 @@ app.use("/api/sauces", saucesRoutes);
 app.use("/api/auth", userRoutes);
 
 
-module.exports = app;
+module.exports = app; // on exporte l'application pour qu'on puisse y accéder depuis les autres fichiers de notre projet notament notre serveur Node
+
+
+

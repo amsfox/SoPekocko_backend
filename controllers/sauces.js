@@ -1,3 +1,4 @@
+// élément de logique métier de nos routes  vers notre contrôleur
 const Product = require("../models/Product")
 const fs = require('fs');
 
@@ -63,26 +64,34 @@ exports.likeDislike = (req, res, next) => {
   //les conditions
   Product.findOne({ _id: req.params.id })
     .then(product => {
+      let message = null;
       if (like === 1) { //like
         product.likes++;
         product.usersLiked.push(req.body.userId);
+        message = "like ajouté";
       }
     
       else if (like === -1) { //dislike
         product.dislikes++;
         product.usersDisliked.push(req.body.userId);
+        message = "dislike ajouté";
     
       }
     
       if (like === 0) {
-        if (product.usersLiked.find(userId => userId == req.body.userId) != undefined) { // si like
+        if (product.usersLiked.find(userId => userId == req.body.userId) != undefined) { // si like (enlever le like)
           product.likes--;
-          product.usersLiked.pop();
-
-        } else { // si dislike
+          const filterUsersLiked = product.usersLiked.filter(elt => elt != req.body.userId);
+          console.log(filterUsersLiked);
+          product.usersLiked = filterUsersLiked;
+          console.log(product.usersLiked);
+          message = "like rétiré";        
+          
+        } else { // si dislike (enlever l edislike)
           product.dislikes--;
-          product.usersDisliked.pop();
-
+          const filterUsersDisliked = product.usersLiked.filter(elt => elt != req.body.userId);
+          product.usersDisliked = filterUsersDisliked;
+          message = "dislike rétiré";
         }
 
     
@@ -94,7 +103,7 @@ exports.likeDislike = (req, res, next) => {
         usersLiked: product.usersLiked,
         usersDisliked: product.usersDisliked
       })
-          .then(() => res.status(200).json({ message: 'objet liké'}))
+          .then(() => res.status(200).json({ message: message}))
           .catch(error => {
             console.log(error);
             res.status(400).json({ error })});

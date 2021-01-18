@@ -1,3 +1,4 @@
+// contient la logique de nos routes pour les users
 const express = require("express");
 const router = express.Router();
 const userCtrl = require("../controllers/user")
